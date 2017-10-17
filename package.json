@@ -1,0 +1,52 @@
+{
+  "name": "passport-teamsnap",
+  "version": "1.0.0",
+  "description": "Teamsnap OAuth 2.0 authentication strategy for Passport.",
+  "keywords": [
+    "passport",
+    "teamsnap",
+    "oauth2",
+    "auth",
+    "authentication",
+    "identity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/7elephants/passport-teamsnap.git"
+  },
+  "bugs": {
+    "url": "http://github.com/7elephants/passport-teamsnap/issues"
+  },
+  "author": {
+    "name": "Andrew Steiger",
+    "email": "andrew@andrewsteiger.com"
+  },
+  "license":"MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
+  "main": "./lib/passport-teamsnap",
+  "dependencies": {
+    "collection-json":"^0.2.1",
+    "passport-oauth2": "^1.4.0",
+    "pkginfo": "^0.2.3"
+  },
+  "devDependencies": {
+    "make-node": "0.3.x",
+    "mocha": "2.x.x",
+    "chai": "2.x.x",
+    "chai-passport-strategy": "1.x.x"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha --reporter spec --require test/bootstrap/node test/*.test.js test/**/*.test.js"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  }
+}
