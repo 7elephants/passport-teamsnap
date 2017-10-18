@@ -1,9 +1,10 @@
-# Passport-Teamsnap
-[Passport](http://passportjs.org/) strategy for authenticating with [Teamsnap](https://www.teamsnap.com/)
-using the OAuth 2.0 API.
+# Passport-Teamsnap [![Build Status](https://travis-ci.org/7elephants/passport-teamsnap.svg?branch=master)](https://travis-ci.org/7elephants/passport-teamsnap) [![Dependencies](https://david-dm.org/7elephants/passport-teamsnap.svg)](https://david-dm.org/7elephants/passport-teamsnap)
+=====================================
+[Passport](http://passportjs.org/) strategy for authenticating with the [Teamsnap](https://www.teamsnap.com/)
+API using the OAuth 2.0 protocol.
 
-This module lets you authenticate using Dropbox in your Node.js applications.
-By plugging into Passport, Dropbox authentication can be easily and
+This module lets you authenticate using Teamsnap in your Node.js applications.
+By plugging into Passport, Teamsnap authentication can be easily and
 unobtrusively integrated into any application or framework that supports
 [Connect](http://www.senchalabs.org/connect/)-style middleware, including
 [Express](http://expressjs.com/).
@@ -56,11 +57,7 @@ Examples not yet provided
 ## Tests
 Tests not yet provided
 
-
-## Prior work
-This strategy is based on Jared Hanson's GitHub strategy for passport: [Jared Hanson](http://github.com/jaredhanson) and specifically his work on [passport-oauth2](http://github.com/jaredhanson/passport-oauth2)
-
 ## Credits and License
-express-sslify is licensed under the MIT license. If you'd like to be informed about new projects follow  [@TheSumOfAll](http://twitter.com/TheSumOfAll/).
+This strategy is based on Jared Hanson's GitHub strategy for passport: [Jared Hanson](http://github.com/jaredhanson) and specifically his work on [passport-oauth2](http://github.com/jaredhanson/passport-oauth2)
 
 Copyright (c) 2017 Andrew Steiger
