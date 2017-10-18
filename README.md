@@ -1,5 +1,5 @@
 # Passport-Teamsnap [![Build Status](https://travis-ci.org/7elephants/passport-teamsnap.svg?branch=master)](https://travis-ci.org/7elephants/passport-teamsnap) [![Dependencies](https://david-dm.org/7elephants/passport-teamsnap.svg)](https://david-dm.org/7elephants/passport-teamsnap)
-=====================================
+
 [Passport](http://passportjs.org/) strategy for authenticating with the [Teamsnap](https://www.teamsnap.com/)
 API using the OAuth 2.0 protocol.
 
