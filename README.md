@@ -23,8 +23,8 @@ defaults to version 3 of Teamsnap's API.
 
     passport.use(new TeamsnapStrategy({
         apiVersion: '3',
-        clientID: TEAMSNAP_CLIENT_ID,
-        clientSecret: TEAMSNAP_CLIENT_SECRET,
+        clientID: TEAMSNAP_APPLICATION_ID,
+        clientSecret: TEAMSNAP_APPLICATION_SECRET,
         callbackURL: "https://www.example.net/auth/dropbox-oauth2/callback"
       },
       function(accessToken, refreshToken, profile, done) {
@@ -51,11 +51,13 @@ application:
         res.redirect('/');
       });
 
-## Examples
-Examples not yet provided
-
 ## Tests
-Tests not yet provided
+To have your tests run against your Teamsnap application, you must supply your Client ID and secret via environment variables.
+
+    export TEAMSNAP_CLIENT_ID=<...YOUR APPLICATION ID...>
+    export TEAMSNAP_SECRET=<...YOUR APPLICATION SECRET...>
+
+    mocha --require ../test/bootstrap/node ../test/*.test.js ../test/**/*.test.js
 
 ## Credits and License
 This strategy is based on Jared Hanson's GitHub strategy for passport: [Jared Hanson](http://github.com/jaredhanson) and specifically his work on [passport-oauth2](http://github.com/jaredhanson/passport-oauth2)

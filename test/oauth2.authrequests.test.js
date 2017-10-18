@@ -2,7 +2,9 @@ var TeamsnapStrategy = require('../lib/strategy')
   , AuthorizationError = require('../lib/errors/authorizationerror')
   , TokenError = require('../lib/errors/tokenerror')
   , InternalOAuthError = require('../lib/errors/internaloautherror')
-  , chai = require('chai');
+  , chai = require('chai')
+  , clientID = process.env.TEAMSNAP_CLIENT_ID || 'ABC123'
+  , secret = process.env.TEAMSNAP_SECRET || 'secret';
 
 describe('TeamsnapStrategy', function() {
   
@@ -10,8 +12,8 @@ describe('TeamsnapStrategy', function() {
     
     describe('that redirects to service provider without redirect URI', function() {
       var strategy = new TeamsnapStrategy({
-        clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-        clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b'
+        clientID: clientID,
+        clientSecret: secret
       },
       function(accessToken, refreshToken, profile, done) {});
       
@@ -30,14 +32,14 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&client_id=https://auth.teamsnap.com/oauth/authorize');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&client_id=' + clientID);
       });
     }); // that redirects to service provider without redirect URI
     
     describe('that redirects to service provider with redirect URI', function() {
       var strategy = new TeamsnapStrategy({
-        clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-        clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -57,16 +59,16 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
       });
     }); // that redirects to service provider with redirect URI
     
     describe('that redirects to service provider with redirect URI and scope', function() {
       var strategy = new TeamsnapStrategy({
-        clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-        clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
-        scope: 'email'
+        scope: 'read'
       },
       function(accessToken, refreshToken, profile, done) {});
       
@@ -85,14 +87,14 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=email&client_id=4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=read&client_id=' + clientID);
       });
     }); // that redirects to service provider with redirect URI and scope
     
     describe('that redirects to service provider with scope option', function() {
       var strategy = new TeamsnapStrategy({
-        clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-        clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -108,18 +110,18 @@ describe('TeamsnapStrategy', function() {
           })
           .req(function(req) {
           })
-          .authenticate({ scope: 'email' });
+          .authenticate({ scope: 'read' });
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=email&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=read&client_id=' + clientID);
       });
     }); // that redirects to service provider with scope option
     
     describe('that redirects to service provider with scope option as array', function() {
       var strategy = new TeamsnapStrategy({
-        clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-        clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -139,16 +141,14 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=permission_1%20permission_2&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=permission_1%20permission_2&client_id=' + clientID);
       });
     }); // that redirects to service provider with scope option as array
     
     describe('that redirects to service provider with scope option as array using non-standard separator', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
         scopeSeparator: ','
       },
@@ -169,14 +169,14 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=permission_1%2Cpermission_2&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=permission_1%2Cpermission_2&client_id=' + clientID);
       });
     }); // that redirects to service provider with scope option as array using non-standard separator
     
     describe('that redirects to service provider with state option', function() {
       var strategy = new TeamsnapStrategy({
-        clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-        clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -196,16 +196,14 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&state=foo123&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&state=foo123&client_id=' + clientID);
       });
     }); // that redirects to service provider with state option
     
     describe('that redirects to service provider with redirect URI option', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -225,16 +223,14 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback%2Falt1&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback%2Falt1&client_id=' + clientID);
       });
     }); // that redirects to service provider with redirect URI option
     
     describe('that redirects to service provider with relative redirect URI option', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -257,16 +253,14 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback%2Falt2&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback%2Falt2&client_id=' + clientID);
       });
     }); // that redirects to service provider with relative redirect URI option
     
     describe('that redirects to authorization server using authorization endpoint that has query parameters with scope option', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize?foo=bar',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -282,24 +276,21 @@ describe('TeamsnapStrategy', function() {
           })
           .req(function(req) {
           })
-          .authenticate({ scope: 'email' });
+          .authenticate({ scope: 'read' });
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?foo=bar&response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=email&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=read&client_id=' + clientID);
       });
     }); // that redirects to authorization server using authorization endpoint that has query parameters with scope option
     
     describe('that redirects to authorization server using authorization endpoint that has query parameters including scope with scope option', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize?foo=bar&scope=baz',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
-      
       
       var url;
   
@@ -311,20 +302,18 @@ describe('TeamsnapStrategy', function() {
           })
           .req(function(req) {
           })
-          .authenticate({ scope: 'email' });
+          .authenticate({ scope: 'read' });
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?foo=bar&scope=email&response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&scope=read&client_id=' + clientID);
       });
     }); // that redirects to authorization server using authorization endpoint that has query parameters including scope with scope option
     
     describe('that redirects to authorization server using authorization endpoint that has query parameters including state with state option', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize?foo=bar&state=baz',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -344,7 +333,7 @@ describe('TeamsnapStrategy', function() {
       });
   
       it('should be redirected', function() {
-        expect(url).to.equal('https://www.example.com/oauth2/authorize?foo=bar&state=foo123&response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+        expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&state=foo123&client_id=' + clientID);
       });
     }); // that redirects to authorization server using authorization endpoint that has query parameters including state with state option
     
@@ -353,481 +342,12 @@ describe('TeamsnapStrategy', function() {
   
   describe('processing response to authorization request', function() {
     
-    describe('that was approved without redirect URI', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret'
-      },
-      function(accessToken, refreshToken, profile, done) {
-        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
-        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
-        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
-        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
-    
-        return done(null, { id: '1234' }, { message: 'Hello' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== undefined) { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
-      }
-      
-      
-      var user
-        , info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .success(function(u, i) {
-            user = u;
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should supply user', function() {
-        expect(user).to.be.an.object;
-        expect(user.id).to.equal('1234');
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Hello');
-      });
-    }); // that was approved without redirect URI
-    
-    describe('that was approved with redirect URI', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {
-        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
-        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
-        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
-        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
-    
-        return done(null, { id: '1234' }, { message: 'Hello' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
-      }
-      
-      
-      var user
-        , info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .success(function(u, i) {
-            user = u;
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should supply user', function() {
-        expect(user).to.be.an.object;
-        expect(user.id).to.equal('1234');
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Hello');
-      });
-    }); // that was approved with redirect URI
-    
-    describe('that was approved with redirect URI option', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {
-        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
-        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
-        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
-        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
-    
-        return done(null, { id: '1234' }, { message: 'Hello' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback/alt1') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
-      }
-      
-      
-      var user
-        , info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .success(function(u, i) {
-            user = u;
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate({ callbackURL: 'https://www.example.net/auth/example/callback/alt1' });
-      });
-
-      it('should supply user', function() {
-        expect(user).to.be.an.object;
-        expect(user.id).to.equal('1234');
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Hello');
-      });
-    }); // that was approved with redirect URI option
-    
-    describe('that was approved with relative redirect URI option', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {
-        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
-        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
-        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
-        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
-    
-        return done(null, { id: '1234' }, { message: 'Hello' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback/alt2') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
-      }
-      
-      
-      var user
-        , info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .success(function(u, i) {
-            user = u;
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.url = '/auth/example/callback/alt2';
-            req.headers.host = 'www.example.net';
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-            req.connection = { encrypted: true };
-          })
-          .authenticate({ callbackURL: '/auth/example/callback/alt2' });
-      });
-
-      it('should supply user', function() {
-        expect(user).to.be.an.object;
-        expect(user.id).to.equal('1234');
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Hello');
-      });
-    }); // that was approved with relative redirect URI option
-    
-    describe('that was approved using verify callback that accepts params', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, params, profile, done) {
-        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
-        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
-        if (params.example_parameter !== 'example_value') { return done(new Error('incorrect params argument')); }
-        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
-        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
-    
-        return done(null, { id: '1234' }, { message: 'Hello' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example', expires_in: 3600, example_parameter: 'example_value' });
-      }
-      
-      
-      var user
-        , info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .success(function(u, i) {
-            user = u;
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should supply user', function() {
-        expect(user).to.be.an.object;
-        expect(user.id).to.equal('1234');
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Hello');
-      });
-    }); // that was approved using verify callback that accepts params
-    
-    describe('that was approved using verify callback, in passReqToCallback mode', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-        passReqToCallback: true
-      },
-      function(req, accessToken, refreshToken, profile, done) {
-        if (req.method != 'GET') { return done(new Error('incorrect req argument')); }
-        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
-        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
-        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
-        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
-    
-        return done(null, { id: '1234' }, { message: 'Hello' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example', expires_in: 3600 });
-      }
-      
-      
-      var user
-        , info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .success(function(u, i) {
-            user = u;
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should supply user', function() {
-        expect(user).to.be.an.object;
-        expect(user.id).to.equal('1234');
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Hello');
-      });
-    }); // that was approved using verify callback, in passReqToCallback mode
-    
-    describe('that was approved using verify callback that accepts params, in passReqToCallback mode', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-        passReqToCallback: true
-      },
-      function(req, accessToken, refreshToken, params, profile, done) {
-        if (req.method != 'GET') { return done(new Error('incorrect req argument')); }
-        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
-        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
-        if (params.example_parameter !== 'example_value') { return done(new Error('incorrect params argument')); }
-        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
-        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
-    
-        return done(null, { id: '1234' }, { message: 'Hello' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example', expires_in: 3600, example_parameter: 'example_value' });
-      }
-      
-      
-      var user
-        , info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .success(function(u, i) {
-            user = u;
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should supply user', function() {
-        expect(user).to.be.an.object;
-        expect(user.id).to.equal('1234');
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Hello');
-      });
-    }); // that was approved using verify callback that accepts params, in passReqToCallback mode
-    
-    describe('that fails due to verify callback supplying false', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {
-        return done(null, false);
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
-      }
-      
-      
-      var info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .fail(function(i) {
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should not supply info', function() {
-        expect(info).to.be.undefined;
-      });
-    }); // that fails due to verify callback supplying false
-    
-    describe('that fails due to verify callback supplying false with additional info', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {
-        return done(null, false, { message: 'Invite required' });
-      });
-      
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        if (code !== 'SplxlOBeZQQYbYS6WxSbIA') { return callback(new Error('incorrect code argument')); }
-        if (options.grant_type !== 'authorization_code') { return callback(new Error('incorrect options.grant_type argument')); }
-        if (options.redirect_uri !== 'https://www.example.net/auth/example/callback') { return callback(new Error('incorrect options.redirect_uri argument')); }
-        
-        return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
-      }
-      
-      
-      var info;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .fail(function(i) {
-            info = i;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should supply info', function() {
-        expect(info).to.be.an.object;
-        expect(info.message).to.equal('Invite required');
-      });
-    }); // that fails due to verify callback supplying false with additional info
-    
     describe('that was denied', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        
+        
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -857,10 +377,10 @@ describe('TeamsnapStrategy', function() {
     
     describe('that was denied with description', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        
+        
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -889,279 +409,12 @@ describe('TeamsnapStrategy', function() {
       });
     }); // that was denied with description
     
-    describe('that was returned with an error without description', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {});
-      
-      
-      var err;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .error(function(e) {
-            err = e;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.error = 'invalid_scope';
-          })
-          .authenticate();
-      });
-
-      it('should error', function() {
-        expect(err).to.be.an.instanceof(AuthorizationError)
-        expect(err.message).to.be.undefined;
-        expect(err.code).to.equal('invalid_scope');
-        expect(err.uri).to.be.undefined;
-        expect(err.status).to.equal(500);
-      });
-    }); // that was returned with an error without description
-    
-    describe('that was returned with an error with description', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {});
-      
-      
-      var err;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .error(function(e) {
-            err = e;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.error = 'invalid_scope';
-            req.query.error_description = 'The scope is invalid';
-          })
-          .authenticate();
-      });
-
-      it('should error', function() {
-        expect(err).to.be.an.instanceof(AuthorizationError)
-        expect(err.message).to.equal('The scope is invalid');
-        expect(err.code).to.equal('invalid_scope');
-        expect(err.uri).to.be.undefined;
-        expect(err.status).to.equal(500);
-      });
-    }); // that was returned with an error with description
-    
-    describe('that was returned with an error with description and link', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, profile, done) {});
-      
-      
-      var err;
-
-      before(function(done) {
-        chai.passport.use(strategy)
-          .error(function(e) {
-            err = e;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.error = 'invalid_scope';
-            req.query.error_description = 'The scope is invalid';
-            req.query.error_uri = 'http://www.example.com/oauth2/help';
-          })
-          .authenticate();
-      });
-
-      it('should error', function() {
-        expect(err).to.be.an.instanceof(AuthorizationError)
-        expect(err.message).to.equal('The scope is invalid');
-        expect(err.code).to.equal('invalid_scope');
-        expect(err.uri).to.equal('http://www.example.com/oauth2/help');
-        expect(err.status).to.equal(500);
-      });
-    }); // that was returned with an error with description and link
-    
-    describe('that errors due to token request error', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, params, profile, done) {
-        return done(new Error('verify callback should not be called'));
-      });
-  
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        return callback(new Error('something went wrong'));
-      }
-  
-  
-      var err;
-  
-      before(function(done) {
-        chai.passport.use(strategy)
-          .error(function(e) {
-            err = e;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should error', function() {
-        expect(err).to.be.an.instanceof(InternalOAuthError)
-        expect(err.message).to.equal('Failed to obtain access token');
-        expect(err.oauthError.message).to.equal('something went wrong');
-      });
-    }); // that errors due to token request error
-    
-    describe('that errors due to token request error, in node-oauth object literal form with OAuth 2.0-compatible body', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, params, profile, done) {
-        return done(new Error('verify callback should not be called'));
-      });
-  
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        return callback({ statusCode: 400, data: '{"error":"invalid_grant","error_description":"The provided value for the input parameter \'code\' is not valid."} '});
-      }
-  
-  
-      var err;
-  
-      before(function(done) {
-        chai.passport.use(strategy)
-          .error(function(e) {
-            err = e;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should error', function() {
-        expect(err).to.be.an.instanceof(TokenError)
-        expect(err.message).to.equal('The provided value for the input parameter \'code\' is not valid.');
-        expect(err.code).to.equal('invalid_grant');
-        expect(err.oauthError).to.be.undefined;
-      });
-    }); // that errors due to token request error, in node-oauth object literal form with OAuth 2.0-compatible body
-    
-    describe('that errors due to token request error, in node-oauth object literal form with JSON body', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, params, profile, done) {
-        return done(new Error('verify callback should not be called'));
-      });
-  
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        return callback({ statusCode: 400, data: '{"error_code":"invalid_grant"}'});
-      }
-  
-  
-      var err;
-  
-      before(function(done) {
-        chai.passport.use(strategy)
-          .error(function(e) {
-            err = e;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should error', function() {
-        expect(err).to.be.an.instanceof(InternalOAuthError)
-        expect(err.message).to.equal('Failed to obtain access token');
-        expect(err.oauthError.statusCode).to.equal(400);
-        expect(err.oauthError.data).to.equal('{"error_code":"invalid_grant"}');
-      });
-    }); // that errors due to token request error, in node-oauth object literal form with JSON body
-    
-    describe('that errors due to token request error, in node-oauth object literal form with text body', function() {
-      var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
-      },
-      function(accessToken, refreshToken, params, profile, done) {
-        return done(new Error('verify callback should not be called'));
-      });
-  
-      strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-        return callback({ statusCode: 500, data: 'Something went wrong'});
-      }
-  
-  
-      var err;
-  
-      before(function(done) {
-        chai.passport.use(strategy)
-          .error(function(e) {
-            err = e;
-            done();
-          })
-          .req(function(req) {
-            req.query = {};
-            req.query.code = 'SplxlOBeZQQYbYS6WxSbIA';
-          })
-          .authenticate();
-      });
-
-      it('should error', function() {
-        expect(err).to.be.an.instanceof(InternalOAuthError)
-        expect(err.message).to.equal('Failed to obtain access token');
-        expect(err.oauthError.statusCode).to.equal(500);
-        expect(err.oauthError.data).to.equal('Something went wrong');
-      });
-    }); // that errors due to token request error, in node-oauth object literal form with text body
-    
     describe('that errors due to verify callback supplying error', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        
+        
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, params, profile, done) {
@@ -1196,10 +449,10 @@ describe('TeamsnapStrategy', function() {
     
     describe('that errors due to verify callback throwing error', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        
+        
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: 'https://www.example.net/auth/example/callback',
       },
       function(accessToken, refreshToken, params, profile, done) {
@@ -1239,10 +492,10 @@ describe('TeamsnapStrategy', function() {
   
     describe('issuing authorization request', function() {
       var strategy = new TeamsnapStrategy({
-        authorizationURL: 'https://www.example.com/oauth2/authorize',
-        tokenURL: 'https://www.example.com/oauth2/token',
-        clientID: 'ABC123',
-        clientSecret: 'secret',
+        
+        
+        clientID: clientID,
+        clientSecret: secret,
         callbackURL: '/auth/example/callback',
       },
       function(accessToken, refreshToken, profile, done) {});
@@ -1265,7 +518,7 @@ describe('TeamsnapStrategy', function() {
         });
 
         it('should be redirected', function() {
-          expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+          expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
         });
       }); // that redirects to service provider from secure connection
       
@@ -1287,7 +540,7 @@ describe('TeamsnapStrategy', function() {
         });
 
         it('should be redirected', function() {
-          expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+          expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=http%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
         });
       }); // that redirects to service provider from insecure connection
       
@@ -1319,7 +572,7 @@ describe('TeamsnapStrategy', function() {
           });
 
           it('should be redirected', function() {
-            expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+            expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
           });
         }); // that is trusted by app and sets x-forwarded-proto
         
@@ -1349,7 +602,7 @@ describe('TeamsnapStrategy', function() {
           });
 
           it('should be redirected', function() {
-            expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+            expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
           });
         }); // that is trusted by app and sets x-forwarded-proto and x-forwarded-host
         
@@ -1378,7 +631,7 @@ describe('TeamsnapStrategy', function() {
           });
 
           it('should be redirected', function() {
-            expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+            expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=http%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
           });
         }); // that is trusted by app and sets x-forwarded-proto and x-forwarded-host
         
@@ -1408,16 +661,14 @@ describe('TeamsnapStrategy', function() {
           });
 
           it('should be redirected', function() {
-            expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Fserver.internal%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+            expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=http%3A%2F%2Fserver.internal%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
           });
         }); // that is not trusted by app and sets x-forwarded-proto and x-forwarded-host
         
         describe('that is trusted by strategy and sets x-forwarded-proto', function() {
           var strategy = new TeamsnapStrategy({
-            authorizationURL: 'https://www.example.com/oauth2/authorize',
-            tokenURL: 'https://www.example.com/oauth2/token',
-            clientID: 'ABC123',
-            clientSecret: 'secret',
+            clientID: clientID,
+            clientSecret: secret,
             callbackURL: '/auth/example/callback',
             proxy: true
           },
@@ -1442,16 +693,14 @@ describe('TeamsnapStrategy', function() {
           });
 
           it('should be redirected', function() {
-            expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+            expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
           });
         }); // that is trusted by strategy and sets x-forwarded-proto
         
         describe('that is trusted by strategy and sets x-forwarded-proto and x-forwarded-host', function() {
           var strategy = new TeamsnapStrategy({
-            authorizationURL: 'https://www.example.com/oauth2/authorize',
-            tokenURL: 'https://www.example.com/oauth2/token',
-            clientID: 'ABC123',
-            clientSecret: 'secret',
+            clientID: clientID,
+            clientSecret: secret,
             callbackURL: '/auth/example/callback',
             proxy: true
           },
@@ -1477,7 +726,7 @@ describe('TeamsnapStrategy', function() {
           });
 
           it('should be redirected', function() {
-            expect(url).to.equal('https://www.example.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=ABC123');
+            expect(url).to.equal('https://auth.teamsnap.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Fwww.example.net%2Fauth%2Fexample%2Fcallback&client_id=' + clientID);
           });
         }); // that is trusted by strategy and sets x-forwarded-proto and x-forwarded-host
         
@@ -1490,10 +739,10 @@ describe('TeamsnapStrategy', function() {
       
       describe('that was approved over secure connection', function() {
         var strategy = new TeamsnapStrategy({
-          authorizationURL: 'https://www.example.com/oauth2/authorize',
-          tokenURL: 'https://www.example.com/oauth2/token',
-          clientID: 'ABC123',
-          clientSecret: 'secret',
+          
+          
+          clientID: clientID,
+          clientSecret: secret,
           callbackURL: '/auth/example/callback',
         },
         function(accessToken, refreshToken, profile, done) {
@@ -1547,10 +796,10 @@ describe('TeamsnapStrategy', function() {
       
       describe('that was approved over insecure connection', function() {
         var strategy = new TeamsnapStrategy({
-          authorizationURL: 'https://www.example.com/oauth2/authorize',
-          tokenURL: 'https://www.example.com/oauth2/token',
-          clientID: 'ABC123',
-          clientSecret: 'secret',
+          
+          
+          clientID: clientID,
+          clientSecret: secret,
           callbackURL: '/auth/example/callback',
         },
         function(accessToken, refreshToken, profile, done) {
