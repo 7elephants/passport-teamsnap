@@ -2,7 +2,9 @@ var TeamsnapStrategy = require('../lib/strategy')
   , AuthorizationError = require('../lib/errors/authorizationerror')
   , TokenError = require('../lib/errors/tokenerror')
   , InternalOAuthError = require('../lib/errors/internaloautherror')
-  , chai = require('chai');
+  , chai = require('chai')
+  , clientID = process.env.TEAMSNAP_CLIENT_ID || 'ABC123'
+  , secret = process.env.TEAMSNAP_SECRET || 'secret';
 
 describe('TeamsnapStrategy', function() {
   
@@ -10,8 +12,8 @@ describe('TeamsnapStrategy', function() {
     
     describe('with normal options', function() {
       var strategy = new TeamsnapStrategy({
-          clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-          clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b'
+          clientID: clientID,
+          clientSecret: secret
         }, function() {});
     
       it('should be named teamsnap', function() {
@@ -23,8 +25,8 @@ describe('TeamsnapStrategy', function() {
       it('should throw', function() {
         expect(function() {
           new TeamsnapStrategy({
-            clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb',
-            clientSecret: 'd34ddc7e9b1fa6c87065e6104036e1944f2a7ac208701bf13b652d78998d340b'
+            clientID: clientID,
+            clientSecret: secret
           });
         }).to.throw(TypeError, 'TeamsnapStrategy requires a verify callback');
       });
@@ -34,7 +36,7 @@ describe('TeamsnapStrategy', function() {
       it('should throw', function() {
         expect(function() {
           new TeamsnapStrategy({
-            clientSecret: 'secret'
+            clientSecret: secret
           }, function() {});
         }).to.throw(TypeError, 'TeamsnapStrategy requires a clientID option');
       });
@@ -44,7 +46,7 @@ describe('TeamsnapStrategy', function() {
       it('should not throw', function() {
         expect(function() {
           new TeamsnapStrategy({
-            clientID: '4843bda735f1bec9051dd466f2e6a76ef6e2563b51ea4af9a0342216fe9a12eb'
+            clientID: clientID
           }, function() {});
         }).to.not.throw();
       });
