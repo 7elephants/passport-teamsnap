@@ -1,6 +1,6 @@
 {
   "name": "passport-teamsnap",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Teamsnap OAuth 2.0 authentication strategy for Passport.",
   "keywords": [
     "passport",
@@ -28,7 +28,7 @@
       "url": "http://www.opensource.org/licenses/MIT"
     }
   ],
-  "main": "./lib/passport-teamsnap",
+  "main": "./lib",
   "dependencies": {
     "collection-json":"^0.2.1",
     "passport-oauth2": "^1.4.0",
