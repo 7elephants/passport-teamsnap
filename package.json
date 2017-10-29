@@ -1,6 +1,6 @@
 {
   "name": "passport-teamsnap",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Teamsnap OAuth 2.0 authentication strategy for Passport.",
   "keywords": [
     "passport",
@@ -30,7 +30,7 @@
   ],
   "main": "./lib",
   "dependencies": {
-    "collection-json":"^0.2.1",
+    "collection-json":"7elephants/collection-json.js",
     "passport-oauth2": "^1.4.0",
     "pkginfo": "^0.2.3"
   },
